@@ -642,6 +642,35 @@
         ]
     },
     {
+        "id": "f98264a050f26a43",
+        "type": "inject",
+        "z": "bf43c5ef815e2243",
+        "name": "Send Interp Multicolor Msg",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 460,
+        "wires": [
+            [
+                "2f70d95631d6b2cd"
+            ]
+        ]
+    },
+    {
         "id": "fa3586050bc275eb",
         "type": "function",
         "z": "bc8510542a0c163a",

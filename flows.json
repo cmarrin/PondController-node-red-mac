@@ -631,7 +631,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,15,7,0]}",
+        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,7,3,0]}",
         "payloadType": "json",
         "x": 190,
         "y": 460,

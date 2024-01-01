@@ -158,7 +158,7 @@
         "id": "39f99e4a62f373c8",
         "type": "serial-port",
         "serialport": "/dev/tty.usbserial-AD02CUJ5",
-        "serialbaud": "1200",
+        "serialbaud": "300",
         "databits": "8",
         "parity": "none",
         "stopbits": "1",

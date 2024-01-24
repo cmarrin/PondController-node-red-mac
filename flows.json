@@ -158,7 +158,7 @@
         "id": "39f99e4a62f373c8",
         "type": "serial-port",
         "serialport": "/dev/tty.usbserial-AD02CUJ5",
-        "serialbaud": "300",
+        "serialbaud": "1200",
         "databits": "8",
         "parity": "none",
         "stopbits": "1",
@@ -310,7 +310,7 @@
         "name": "",
         "serial": "39f99e4a62f373c8",
         "x": 840,
-        "y": 600,
+        "y": 680,
         "wires": []
     },
     {
@@ -335,7 +335,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[240,224,64,0,0]}",
         "payloadType": "json",
         "x": 190,
-        "y": 160,
+        "y": 300,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -354,7 +354,7 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 600,
+        "y": 680,
         "wires": [
             [
                 "9a4242ee0a7c3d43"
@@ -383,7 +383,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[60,7,0,0,0]}",
         "payloadType": "json",
         "x": 170,
-        "y": 100,
+        "y": 240,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -400,7 +400,7 @@
             "2f70d95631d6b2cd"
         ],
         "x": 295,
-        "y": 600,
+        "y": 680,
         "wires": [
             [
                 "d4f9c1bdf968205c"
@@ -416,8 +416,8 @@
         "links": [
             "aab07133f0d61167"
         ],
-        "x": 435,
-        "y": 160,
+        "x": 815,
+        "y": 380,
         "wires": []
     },
     {
@@ -441,7 +441,7 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 160,
-        "y": 660,
+        "y": 740,
         "wires": [
             [
                 "4401825353a8cec8"
@@ -458,7 +458,7 @@
             "e47614c49656239e"
         ],
         "x": 305,
-        "y": 660,
+        "y": 740,
         "wires": []
     },
     {
@@ -475,14 +475,14 @@
         "layout": "row-spread",
         "className": "",
         "x": 650,
-        "y": 660,
+        "y": 740,
         "wires": []
     },
     {
         "id": "45b0bd1f8f25fc92",
         "type": "inject",
         "z": "bf43c5ef815e2243",
-        "name": "Send Executable",
+        "name": "Send Executable 00",
         "props": [
             {
                 "p": "payload"
@@ -497,8 +497,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payloadType": "date",
-        "x": 160,
+        "payload": "00",
+        "payloadType": "str",
+        "x": 170,
         "y": 40,
         "wires": [
             [
@@ -511,14 +512,14 @@
         "type": "function",
         "z": "bf43c5ef815e2243",
         "name": "Build Executable Msg",
-        "func": "var fs = global.get('fs')\n\nfunction sendMsg(name)\n{\n    var buf = fs.readFileSync(name);\n    var p = {\n        \"adr\": 0,\n        \"cmd\": \"X\",\n        \"size\": buf.length,\n        \"data\": buf\n    }\n    node.warn(\"*** Sending '\" + name + \"'\");\n    node.send({ payload : p });\n}\n\nfunction sendFinished()\n{\n    var p = {\n        \"adr\": 0,\n        \"cmd\": \"C\",\n        \"size\": 5,\n        \"data\": [\n            200,\n            255,\n            255,\n            4,\n            2\n        ]\n    }\n    node.warn(\"*** Sending Executable Finished\");\n    node.send({ payload : p });\n}\n\nfor (var i = 0; i < 16; ++i) {\n    var num = (\"000\" + i).slice(-2);\n    var name = \"/Users/cmarrin/PostLightEffects\" + num + \".arlx\";\n\n    if (!fs.existsSync(name)) {\n        // Turn on lights to indicate done\n        setTimeout(sendFinished, i * 20000 + 100);\n        break;\n    }\n    \n    setTimeout(sendMsg.bind(undefined, name), i * 20000 + 100);\n}\n\n\n\nreturn null;",
+        "func": "var fs = global.get('fs')\n\nvar name = \"/Users/cmarrin/PostLightEffects\" + msg.payload + \".arlx\";\n\nif (!fs.existsSync(name)) {\n    node.warn(\"*** Error '\" + name + \"' does not exist\");\n} else {\n    var buf = fs.readFileSync(name);\n    var p = {\n        \"adr\": 0,\n        \"cmd\": \"X\",\n        \"size\": buf.length,\n        \"data\": buf\n    }\n    node.warn(\"*** Sending '\" + name + \"'\");\n    node.send({ payload : p });\n}\n\nreturn null;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 40,
+        "x": 580,
+        "y": 100,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -544,10 +545,10 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"c\",\"size\":3,\"data\":[100,224,64]}",
+        "payload": "{\"adr\":6,\"cmd\":\"c\",\"size\":3,\"data\":[250,224,64]}",
         "payloadType": "json",
         "x": 210,
-        "y": 520,
+        "y": 600,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -573,10 +574,10 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"f\",\"size\":4,\"data\":[20,224,200,0]}",
+        "payload": "{\"adr\":2,\"cmd\":\"f\",\"size\":4,\"data\":[20,224,200,0]}",
         "payloadType": "json",
         "x": 180,
-        "y": 280,
+        "y": 360,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -602,10 +603,10 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"p\",\"size\":5,\"data\":[50,224,200,6,7]}",
+        "payload": "{\"adr\":3,\"cmd\":\"p\",\"size\":5,\"data\":[50,224,200,6,7]}",
         "payloadType": "json",
         "x": 180,
-        "y": 340,
+        "y": 420,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -631,10 +632,10 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,7,3,0]}",
+        "payload": "{\"adr\":5,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,12,6,0]}",
         "payloadType": "json",
         "x": 190,
-        "y": 460,
+        "y": 540,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -660,13 +661,100 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
+        "payload": "{\"adr\":4,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
         "payloadType": "json",
         "x": 190,
-        "y": 400,
+        "y": 480,
         "wires": [
             [
                 "2f70d95631d6b2cd"
+            ]
+        ]
+    },
+    {
+        "id": "e5498cd92576b87f",
+        "type": "inject",
+        "z": "bf43c5ef815e2243",
+        "name": "Send Executable 01",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "01",
+        "payloadType": "str",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "5d77bb2801589b37"
+            ]
+        ]
+    },
+    {
+        "id": "85d1b69e85696062",
+        "type": "inject",
+        "z": "bf43c5ef815e2243",
+        "name": "Send Executable 02",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "02",
+        "payloadType": "str",
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "5d77bb2801589b37"
+            ]
+        ]
+    },
+    {
+        "id": "da3851ebd885227a",
+        "type": "inject",
+        "z": "bf43c5ef815e2243",
+        "name": "Send Executable 03",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "03",
+        "payloadType": "str",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "5d77bb2801589b37"
             ]
         ]
     },

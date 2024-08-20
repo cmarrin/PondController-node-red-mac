@@ -158,7 +158,7 @@
         "id": "39f99e4a62f373c8",
         "type": "serial-port",
         "serialport": "/dev/tty.usbserial-AD02CUJ5",
-        "serialbaud": "1200",
+        "serialbaud": "2400",
         "databits": "8",
         "parity": "none",
         "stopbits": "1",
@@ -332,7 +332,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[240,224,64,0,0]}",
+        "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[140,224,64,0,0]}",
         "payloadType": "json",
         "x": 190,
         "y": 300,
@@ -347,7 +347,7 @@
         "type": "function",
         "z": "bf43c5ef815e2243",
         "name": "Make Light Event",
-        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nnode.warn(\"Enter Send Event\");\n\nvar buf = Buffer.alloc(6 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt();\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nbuf.writeUInt8(msg.payload.size, index++);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt();\nbuf[index++] = \")\".charCodeAt();\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\n//node.warn(buf);\nnode.warn(\"cmd='\" + msg.payload.cmd + \"'\");\n\nreturn { payload : buf };",
+        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nnode.warn(\"Enter Send Event\");\n\nvar buf = Buffer.alloc(7 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt();\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nnode.warn(\"*** payload.size=\" + msg.payload.size);\nbuf.writeUInt8((msg.payload.size >> 8) & 0xff, index++);\nbuf.writeUInt8(msg.payload.size & 0xff, index++);\nnode.warn(\"*** after payload size\");\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt();\nbuf[index++] = \")\".charCodeAt();\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\n//node.warn(buf);\nnode.warn(\"cmd='\" + msg.payload.cmd + \"'\");\n\nreturn { payload : buf };",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -482,7 +482,7 @@
         "id": "45b0bd1f8f25fc92",
         "type": "inject",
         "z": "bf43c5ef815e2243",
-        "name": "Send Executable 00",
+        "name": "Send Executable",
         "props": [
             {
                 "p": "payload"
@@ -499,8 +499,8 @@
         "topic": "",
         "payload": "00",
         "payloadType": "str",
-        "x": 170,
-        "y": 40,
+        "x": 160,
+        "y": 100,
         "wires": [
             [
                 "5d77bb2801589b37"
@@ -512,7 +512,7 @@
         "type": "function",
         "z": "bf43c5ef815e2243",
         "name": "Build Executable Msg",
-        "func": "var fs = global.get('fs')\n\nvar name = \"/Users/cmarrin/PostLightEffects\" + msg.payload + \".arlx\";\n\nif (!fs.existsSync(name)) {\n    node.warn(\"*** Error '\" + name + \"' does not exist\");\n} else {\n    var buf = fs.readFileSync(name);\n    var p = {\n        \"adr\": 0,\n        \"cmd\": \"X\",\n        \"size\": buf.length,\n        \"data\": buf\n    }\n    node.warn(\"*** Sending '\" + name + \"'\");\n    node.send({ payload : p });\n}\n\nreturn null;",
+        "func": "var fs = global.get('fs')\n\nvar name = \"/Users/cmarrin/PostLightEffects.lcdx\";\n\nif (!fs.existsSync(name)) {\n    node.warn(\"*** Error '\" + name + \"' does not exist\");\n} else {\n    var buf = fs.readFileSync(name);\n    var p = {\n        \"adr\": 0,\n        \"cmd\": \"X\",\n        \"size\": buf.length,\n        \"data\": buf\n    }\n    node.warn(\"*** Sending '\" + name + \"'\");\n    node.send({ payload : p });\n}\n\nreturn null;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -520,35 +520,6 @@
         "libs": [],
         "x": 580,
         "y": 100,
-        "wires": [
-            [
-                "2f70d95631d6b2cd"
-            ]
-        ]
-    },
-    {
-        "id": "20a3b01b40c22c86",
-        "type": "inject",
-        "z": "bf43c5ef815e2243",
-        "name": "Send Interp ConstantColor Msg",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{\"adr\":6,\"cmd\":\"c\",\"size\":3,\"data\":[250,224,64]}",
-        "payloadType": "json",
-        "x": 210,
-        "y": 600,
         "wires": [
             [
                 "2f70d95631d6b2cd"
@@ -574,7 +545,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":2,\"cmd\":\"f\",\"size\":4,\"data\":[20,224,200,0]}",
+        "payload": "{\"adr\":0,\"cmd\":\"f\",\"size\":4,\"data\":[25,200,100,2]}",
         "payloadType": "json",
         "x": 180,
         "y": 360,
@@ -603,7 +574,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":3,\"cmd\":\"p\",\"size\":5,\"data\":[50,224,200,6,7]}",
+        "payload": "{\"adr\":0,\"cmd\":\"p\",\"size\":5,\"data\":[50,224,200,6,7]}",
         "payloadType": "json",
         "x": 180,
         "y": 420,
@@ -632,7 +603,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":5,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,12,6,0]}",
+        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":6,\"data\":[0,224,150,12,6,0]}",
         "payloadType": "json",
         "x": 190,
         "y": 540,
@@ -661,100 +632,13 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":4,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
+        "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
         "payloadType": "json",
         "x": 190,
         "y": 480,
         "wires": [
             [
                 "2f70d95631d6b2cd"
-            ]
-        ]
-    },
-    {
-        "id": "e5498cd92576b87f",
-        "type": "inject",
-        "z": "bf43c5ef815e2243",
-        "name": "Send Executable 01",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "01",
-        "payloadType": "str",
-        "x": 170,
-        "y": 80,
-        "wires": [
-            [
-                "5d77bb2801589b37"
-            ]
-        ]
-    },
-    {
-        "id": "85d1b69e85696062",
-        "type": "inject",
-        "z": "bf43c5ef815e2243",
-        "name": "Send Executable 02",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "02",
-        "payloadType": "str",
-        "x": 170,
-        "y": 120,
-        "wires": [
-            [
-                "5d77bb2801589b37"
-            ]
-        ]
-    },
-    {
-        "id": "da3851ebd885227a",
-        "type": "inject",
-        "z": "bf43c5ef815e2243",
-        "name": "Send Executable 03",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "03",
-        "payloadType": "str",
-        "x": 170,
-        "y": 160,
-        "wires": [
-            [
-                "5d77bb2801589b37"
             ]
         ]
     },

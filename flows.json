@@ -335,10 +335,10 @@
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[140,224,64,0,0]}",
         "payloadType": "json",
         "x": 190,
-        "y": 260,
+        "y": 200,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -347,7 +347,7 @@
         "type": "function",
         "z": "bf43c5ef815e2243",
         "name": "Make Light Event",
-        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nnode.warn(\"Enter Send Event\");\n\nvar buf = Buffer.alloc(7 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt();\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nnode.warn(\"*** payload.size=\" + msg.payload.size);\nbuf.writeUInt8((msg.payload.size >> 8) & 0xff, index++);\nbuf.writeUInt8(msg.payload.size & 0xff, index++);\nnode.warn(\"*** after payload size\");\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt();\nbuf[index++] = \")\".charCodeAt();\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\n//node.warn(buf);\nnode.warn(\"cmd='\" + msg.payload.cmd + \"' (cksum=\" + buf[checksumIndex] + \")\");\n\nreturn { payload : buf };",
+        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar buf = Buffer.alloc(7 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt();\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nbuf.writeUInt8((msg.payload.size >> 8) & 0xff, index++);\nbuf.writeUInt8(msg.payload.size & 0xff, index++);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt();\nbuf[index++] = \")\".charCodeAt();\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\nnode.warn(\"Serial:cmd='\" + msg.payload.cmd + \"' (cksum=\" + buf[checksumIndex] + \")\");\n\nreturn { payload : buf };",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -379,14 +379,14 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "",
+        "topic": "command",
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[60,7,0,0,0]}",
         "payloadType": "json",
         "x": 170,
-        "y": 200,
+        "y": 140,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -417,8 +417,8 @@
         "links": [
             "aab07133f0d61167"
         ],
-        "x": 815,
-        "y": 380,
+        "x": 855,
+        "y": 320,
         "wires": []
     },
     {
@@ -501,7 +501,7 @@
         "payload": "00",
         "payloadType": "str",
         "x": 160,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "5d77bb2801589b37"
@@ -519,11 +519,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 440,
-        "y": 140,
+        "x": 420,
+        "y": 80,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -552,7 +552,7 @@
         "y": 320,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -581,7 +581,7 @@
         "y": 380,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -610,7 +610,7 @@
         "y": 500,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -639,7 +639,7 @@
         "y": 440,
         "wires": [
             [
-                "2f70d95631d6b2cd"
+                "dfa752999652ce15"
             ]
         ]
     },
@@ -661,14 +661,14 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "",
+        "topic": "executable",
         "payload": "00",
         "payloadType": "str",
         "x": 160,
         "y": 560,
         "wires": [
             [
-                "2c2d2ae7c0391051"
+                "567de1a3c9d68ca9"
             ]
         ]
     },
@@ -684,7 +684,7 @@
         "winHide": false,
         "oldrc": false,
         "name": "",
-        "x": 830,
+        "x": 850,
         "y": 560,
         "wires": [
             [],
@@ -693,17 +693,17 @@
         ]
     },
     {
-        "id": "2c2d2ae7c0391051",
+        "id": "567de1a3c9d68ca9",
         "type": "function",
         "z": "bf43c5ef815e2243",
-        "name": "Build POST Msg",
-        "func": "// Get the URI\nvar uri=global.get(\"uri\") || \"\";\nvar timeout = global.get(\"uriTimeout\") || 0;\n\nif (!uri || timeout < Date.now()) {\n    uri = \"plc0.local\";\n    \n    // spawn a request for the ip address from mDNS\n}\n\nvar file = \"/Users/cmarrin/PostLightEffects.clvx\";\nvar root = \"fs\";\n\nvar contents = \" -F file=@\" + file + \" http://\" + uri + \"/\" + root;\n\nreturn { payload: contents };",
+        "name": "Build Command Msg",
+        "func": "function toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar uri = \"192.168.4.254\";\nvar contents = \"\";\n\nif (msg.topic == \"executable\") {\n    var file = \"/Users/cmarrin/PostLightEffects.clvx\";\n    var root = \"fs\";\n\n    contents = \" -F file=@\" + file + \" http://\" + uri + \"/\" + root;\n} else {\n    contents = \" http://\" + uri + \"/command?cmd=\";\n\n    // Add command\n    // Make enough room for 3 digit param plus comma\n    contents += msg.payload.cmd;\n\n    for (var i = 0; i < msg.payload.size; ++i) {\n        contents += \",\" + msg.payload.data[i];\n    }\n}\n\nnode.warn(\"HTTP:cmd='\" + contents + \"'\");\n\nreturn { payload : contents };\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
+        "x": 500,
         "y": 560,
         "wires": [
             [
@@ -712,51 +712,10 @@
         ]
     },
     {
-        "id": "567de1a3c9d68ca9",
-        "type": "function",
-        "z": "bf43c5ef815e2243",
-        "name": "Build Command Msg",
-        "func": "// Get the URI\nvar uri=global.get(\"uri\") || \"\";\nvar timeout = global.get(\"uriTimeout\") || 0;\n\nif (!uri || timeout < Date.now()) {\n    uri = \"plc0.local\";\n    \n    // spawn a request for the ip address from mDNS\n}\n\nvar root = \"command\";\n\nvar contents = \" http://\" + uri + \"/\" + root + \"?cmd=\";\n\n// Add command\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nnode.warn(\"Enter build command msg\");\n\n// Make enough room for 3 digit param plus comma\ncontents += msg.payload.cmd;\n\nnode.warn(\"*** payload.size=\" + msg.payload.size);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    contents += \",\" + msg.payload.data[i];\n}\n\nnode.warn(\"cmd='\" + contents + \"'\");\n\nreturn { payload : contents };\n\n\n\n\n\n\n\n\n\n\n\n\n\nreturn { payload: contents };",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 540,
-        "y": 620,
-        "wires": [
-            [
-                "85930b171fa6428d"
-            ]
-        ]
-    },
-    {
-        "id": "97bc2fc111cbe4a0",
-        "type": "http request",
-        "z": "bf43c5ef815e2243",
-        "name": "Get IP Address",
-        "method": "GET",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "http://plc0.local/getipaddr",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "senderr": false,
-        "x": 820,
-        "y": 120,
-        "wires": [
-            [
-                "13b272639406f6c5"
-            ]
-        ]
-    },
-    {
-        "id": "9d94a8694fa8855e",
+        "id": "07fb822cd6eeb87a",
         "type": "inject",
         "z": "bf43c5ef815e2243",
-        "name": "",
+        "name": "Send Flash Color Msg",
         "props": [
             {
                 "p": "payload"
@@ -771,31 +730,42 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 640,
-        "y": 120,
+        "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[80,224,64,5,4]}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 260,
         "wires": [
             [
-                "97bc2fc111cbe4a0"
+                "dfa752999652ce15"
             ]
         ]
     },
     {
-        "id": "13b272639406f6c5",
-        "type": "debug",
+        "id": "dfa752999652ce15",
+        "type": "change",
         "z": "bf43c5ef815e2243",
         "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 890,
-        "y": 180,
-        "wires": []
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "command",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 320,
+        "wires": [
+            [
+                "2f70d95631d6b2cd"
+            ]
+        ]
     },
     {
         "id": "fa3586050bc275eb",

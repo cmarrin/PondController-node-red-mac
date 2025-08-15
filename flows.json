@@ -16,6 +16,14 @@
         "env": []
     },
     {
+        "id": "908ffa7fd113eb03",
+        "type": "tab",
+        "label": "Control Lights",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "2b56a08018ca8626",
         "type": "ui_base",
         "theme": {
@@ -133,17 +141,6 @@
         "className": ""
     },
     {
-        "id": "68116819f71e2f5a",
-        "type": "ui_group",
-        "name": "",
-        "tab": "",
-        "order": 1,
-        "disp": true,
-        "width": "6",
-        "collapse": false,
-        "className": ""
-    },
-    {
         "id": "cb99c239e3a46cec",
         "type": "ui_group",
         "name": "State",
@@ -179,7 +176,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 2,
+        "order": 3,
         "width": 3,
         "height": 1
     },
@@ -189,7 +186,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 3,
+        "order": 4,
         "width": 3,
         "height": 1
     },
@@ -199,7 +196,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 4,
+        "order": 5,
         "width": 3,
         "height": 1
     },
@@ -209,7 +206,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 5,
+        "order": 6,
         "width": 3,
         "height": 1
     },
@@ -219,7 +216,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 6,
+        "order": 7,
         "width": 3,
         "height": 1
     },
@@ -229,7 +226,7 @@
         "z": "bf43c5ef815e2243",
         "name": "spacer",
         "group": "b8db7c4fd954a85d",
-        "order": 7,
+        "order": 8,
         "width": 3,
         "height": 1
     },
@@ -302,6 +299,17 @@
         "order": 8,
         "width": 3,
         "height": 1
+    },
+    {
+        "id": "2f87ec5f09135c88",
+        "type": "ui_group",
+        "name": "Lights",
+        "tab": "a2477e05a35a266b",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
     },
     {
         "id": "9a4242ee0a7c3d43",
@@ -604,7 +612,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":5,\"data\":[50,150,120,4,7]}",
+        "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":5,\"data\":[50,255,120,15,7]}",
         "payloadType": "json",
         "x": 190,
         "y": 500,
@@ -633,7 +641,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,255,96,255,240,170,255,255,38,255,255,5]}",
+        "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,200,96,255,200,170,255,200,38,255,200,3]}",
         "payloadType": "json",
         "x": 190,
         "y": 440,
@@ -868,6 +876,7 @@
         "name": "Control Lights",
         "func": "function makeMsg()\n{\n    return {\n        \"topic\" : \"ControlLights\", \n        \"payload\" : payloads[currentPayload]\n    };\n}\n\nif (msg.payload == \"Center\") {\n    // Go to the next command\n    if (++currentPayload >= payloads.length) {\n        currentPayload = 0;\n    }\n} else {\n    return null\n}\n\nreturn makeMsg();\n\n",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "// Setup the payload\n\ncurrentPayload = 0;\n\npayloads = [\n    {\n        \"adr\":  0,\n        \"cmd\":  \"C\",\n        \"hue\":  0,\n        \"sat\":  0,\n        \"val\":  0,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"C\",\n        \"hue\":  60,\n        \"sat\":  56,\n        \"val\":  16,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"F\",\n        \"hue\":  6,\n        \"sat\":  56,\n        \"val\":  32,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"F\",\n        \"hue\":  60,\n        \"sat\":  56,\n        \"val\":  16,\n        \"par1\": 4,\n        \"par2\": 0\n    }\n];\n\n// Array entry for each command. Each entry is\n// an array with the currentParams for that command\n// of the form [ hue, sat, val, speed ]\nvar currentParams = [\n    // \"X\" - all lights off\n    [ 0, 0, 0, 0 ],\n    \n    // \"C\" - constant color\n    [ 60, 56, 16, 0],\n    \n    // \"F\" - flicker\n    [ 6, 56, 32, 0 ],\n    \n    // \"R\" - rainbow\n    [ 0, 0, 0, 0 ]\n];\n\n// Array entry for each command. each entry is\n// an array with the sequence of params to use\n// when the buttons are pressed\nvar paramSequence = [\n    // \"X\" - all lights off\n    [ 0, 0, 0, 0 ],\n    \n    // \"C\" - constant color\n    [ 60, 56, 16, 0],\n    \n    // \"F\" - flicker\n    [ 6, 56, 32, 0 ],\n    \n    // \"R\" - rainbow\n    [ 0, 0, 0, 0 ]\n];\n",
         "finalize": "",
@@ -1043,5 +1052,409 @@
                 "f45d4d2043415fe6"
             ]
         ]
+    },
+    {
+        "id": "e61567f4096e2f55",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "String to Light Command",
+        "func": "function makeMsg(adr, cmd, data)\n{\n    return {\n        \"topic\" : \"ControlLights\", \n        \"payload\" : {\n            \"adr\": adr,\n            \"cmd\": cmd,\n            \"size\": data.length,\n            \"data\": data\n        }\n    };\n}\n\nvar effect = msg.payload;\n\nvar brightness = global.get(\"LightBrightnesses\")[global.get(\"LightEffect\")];\nif (brightness == undefined) {\n    brightness = 255;\n}\n\nvar color = global.get(\"LightColors\")[global.get(\"LightEffect\")];\nif (color == undefined) {\n    color = { h : 0, s : 0 };\n}\nvar hue = Math.round(color.h / 355 * 255);\nvar sat = Math.round(color.s * 255);\n\n//node.warn(\"*** hue=\" + hue + \", sat=\" + sat + \", brightness=\" + brightness)\n\nswitch (effect) {\n    case \"CenterButton\":\n    case \"LightOff\":\n        return makeMsg(0, \"C\", [ 0, 0, 0, 0, 0 ]);\n    case \"UpperLeftButton\":\n    case \"LightColor\":\n        return makeMsg(0, \"C\", [hue, sat, brightness, 0, 0]);\n    case \"LowerLeftButton\":\n    case \"LightFlicker\":\n        return makeMsg(0, \"f\", [hue, sat, brightness, 2 ]);\n    case \"LightPulse\":\n        return makeMsg(0, \"p\", [hue, sat, brightness, 5, 5 ]);\n    case \"LowerRightButton\":\n    case \"LightMulti\":\n        return makeMsg(0, \"m\", [\n              0, 255, brightness, \n             96, 255, brightness,\n            170, 255, brightness,\n             38, 255, brightness, 100 ]);\n    case \"UpperRightButton\":\n    case \"LightRainbow\":\n        return makeMsg(0, \"r\", [0, 224, brightness, 15, 0, 1 ]);\n\n    default:            return null;\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "// Setup the payload\n\ncurrentPayload = 0;\n\npayloads = [\n    {\n        \"adr\":  0,\n        \"cmd\":  \"C\",\n        \"hue\":  0,\n        \"sat\":  0,\n        \"val\":  0,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"C\",\n        \"hue\":  60,\n        \"sat\":  56,\n        \"val\":  16,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"F\",\n        \"hue\":  6,\n        \"sat\":  56,\n        \"val\":  32,\n        \"par1\": 0,\n        \"par2\": 0\n    },\n    {\n        \"adr\":  0,\n        \"cmd\":  \"F\",\n        \"hue\":  60,\n        \"sat\":  56,\n        \"val\":  16,\n        \"par1\": 4,\n        \"par2\": 0\n    }\n];\n",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 440,
+        "wires": [
+            [
+                "2f90e59b627dcfc3",
+                "e6a4c9c2ab6f8430"
+            ]
+        ]
+    },
+    {
+        "id": "ca7e17a8515287a8",
+        "type": "serial out",
+        "z": "908ffa7fd113eb03",
+        "name": "",
+        "serial": "39f99e4a62f373c8",
+        "x": 580,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "2f90e59b627dcfc3",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "Make Light Event",
+        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar buf = Buffer.alloc(6 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt(0);\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nbuf.writeUInt8(msg.payload.size, index++);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt(0);\nbuf[index++] = \")\".charCodeAt(0);\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\n//node.warn(buf);\n//node.warn(\"Send Light Event:cmd='\" + msg.payload.cmd + \n//        \"', data=[\" + msg.payload.data + \"]\");\n\nreturn { payload : buf };",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 620,
+        "wires": [
+            [
+                "ca7e17a8515287a8"
+            ]
+        ]
+    },
+    {
+        "id": "31ed19ab66200615",
+        "type": "link in",
+        "z": "908ffa7fd113eb03",
+        "name": "Receive Light Effect",
+        "links": [],
+        "x": 85,
+        "y": 620,
+        "wires": [
+            [
+                "2f90e59b627dcfc3"
+            ]
+        ]
+    },
+    {
+        "id": "4c10b6878c8e35b6",
+        "type": "ui_dropdown",
+        "z": "908ffa7fd113eb03",
+        "name": "",
+        "label": "Effect",
+        "tooltip": "",
+        "place": "Color",
+        "group": "2f87ec5f09135c88",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Color",
+                "value": "LightColor",
+                "type": "str"
+            },
+            {
+                "label": "Flicker",
+                "value": "LightFlicker",
+                "type": "str"
+            },
+            {
+                "label": "Rainbow",
+                "value": "LightRainbow",
+                "type": "str"
+            },
+            {
+                "label": "Multicolor",
+                "value": "LightMulti",
+                "type": "str"
+            },
+            {
+                "label": "Pulse",
+                "value": "LightPulse",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 190,
+        "y": 260,
+        "wires": [
+            [
+                "0cb1e440d5ad10fe",
+                "e73e267063030827"
+            ]
+        ]
+    },
+    {
+        "id": "0cb1e440d5ad10fe",
+        "type": "change",
+        "z": "908ffa7fd113eb03",
+        "name": "LightEffect",
+        "rules": [
+            {
+                "t": "set",
+                "p": "LightEffect",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 260,
+        "wires": [
+            [
+                "fd4c5ab3314f7d22"
+            ]
+        ]
+    },
+    {
+        "id": "06497bc537cadc3a",
+        "type": "link in",
+        "z": "908ffa7fd113eb03",
+        "name": "Set Global Light Effect",
+        "links": [],
+        "x": 85,
+        "y": 260,
+        "wires": [
+            [
+                "4c10b6878c8e35b6"
+            ]
+        ]
+    },
+    {
+        "id": "e26ae2c7db463151",
+        "type": "ui_switch",
+        "z": "908ffa7fd113eb03",
+        "name": "",
+        "label": "Post Lights On",
+        "tooltip": "",
+        "group": "2f87ec5f09135c88",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "LightOn",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "LightOff",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 220,
+        "y": 380,
+        "wires": [
+            [
+                "93ef3789b744786d"
+            ]
+        ]
+    },
+    {
+        "id": "774a77791d961644",
+        "type": "link in",
+        "z": "908ffa7fd113eb03",
+        "name": "Light On Off",
+        "links": [],
+        "x": 85,
+        "y": 380,
+        "wires": [
+            [
+                "e26ae2c7db463151"
+            ]
+        ]
+    },
+    {
+        "id": "93ef3789b744786d",
+        "type": "change",
+        "z": "908ffa7fd113eb03",
+        "name": "LightsOn",
+        "rules": [
+            {
+                "t": "set",
+                "p": "LightsOn",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 380,
+        "wires": [
+            [
+                "fd4c5ab3314f7d22"
+            ]
+        ]
+    },
+    {
+        "id": "fd4c5ab3314f7d22",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "LightEffectLightOnHandler",
+        "func": "if (msg.payload == \"LightOff\"){\n    // LightOff goes out no matter what\n    return msg;\n} else if (msg.payload == \"LightOn\") {\n    // Transform message to the current effect\n    return { \"payload\": global.get(\"LightEffect\") };\n} else {\n    // This is an effect change. Only send it if light is on\n    if (global.get(\"LightsOn\") == \"LightOn\") {\n        return { \"payload\": global.get(\"LightEffect\") };\n    }\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 300,
+        "wires": [
+            [
+                "e61567f4096e2f55"
+            ]
+        ]
+    },
+    {
+        "id": "aa9f14bf75e25dea",
+        "type": "ui_slider",
+        "z": "908ffa7fd113eb03",
+        "name": "",
+        "label": "Brightness",
+        "tooltip": "",
+        "group": "2f87ec5f09135c88",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": "30",
+        "max": "255",
+        "step": 1,
+        "className": "",
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "f9c573219cdcf3cd"
+            ]
+        ]
+    },
+    {
+        "id": "f9c573219cdcf3cd",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "Brightness Handler",
+        "func": "// Incoming message is a brightness value (0-255) which we \n// want to put in the global store per-effect.\nif (global.get(\"LightBrightnesses\") == null) {\n    global.set(\"LightBrightnesses\", {});\n}\n\nglobal.get(\"LightBrightnesses\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 180,
+        "wires": [
+            [
+                "fd4c5ab3314f7d22"
+            ]
+        ]
+    },
+    {
+        "id": "179f117e72542aed",
+        "type": "comment",
+        "z": "908ffa7fd113eb03",
+        "name": "Effect Parameters",
+        "info": "Current effects:\n\nColor(h, s, v, n, d)\n\nSet a constant color (h, s, v). Flash n\ntimes with a duration of d ms per flash.\nIf n == 0, leave lights on.\n\n\nFlicker(h, s, v, speed)\n\nFlicker light with color (h, s, v) at\nthe passed speed (0-7).\n\n\nRainbow(h, s, v, speed, range, mode)\n\nChange colors starting at (h, s, v) at a rate\nof speed from 0 (very slow) to 15 (very fast). \nRange is how far from the initial color to \ngo, from 0 (little change) to 7 (full range). \nIf mode is 0 colors bounce back and forth\nbetween start color through range. If it \nis 1 colors cycle the full color spectrum \nand range is ignored.\n\n\nMulticolor( h1, s1, v1, \n            h2, s2, v2,\n            h3, s3, v3,\n            h4, s4, v4,\n            duration)\n\nCross fade between the four passed colors.\nPassed duration is number of seconds between\ncolor changes.\n\n\nPulse(h, s, v, speed, depth)\n\nPulse color (h, s, v) from the brightness in\nv down according to the value of depth where\na value of 0 is very slight and 7 is very\ndeep. Speed is now fast to pulse from 0\n(slow) to 7 (fast)",
+        "x": 150,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "334159e25dfe3937",
+        "type": "ui_colour_picker",
+        "z": "908ffa7fd113eb03",
+        "name": "",
+        "label": "Color",
+        "group": "2f87ec5f09135c88",
+        "format": "hsl",
+        "outformat": "object",
+        "showSwatch": true,
+        "showPicker": false,
+        "showValue": true,
+        "showHue": false,
+        "showAlpha": false,
+        "showLightness": true,
+        "square": "false",
+        "dynOutput": "false",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "d0d0ccabe5682d3c"
+            ]
+        ]
+    },
+    {
+        "id": "d0d0ccabe5682d3c",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "Color Handler",
+        "func": "// Incoming message is a color object which we want to put\n// in the global store per-effect.\nif (global.get(\"LightColors\") == null) {\n    global.set(\"LightColors\", { });\n}\n\nglobal.get(\"LightColors\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 100,
+        "wires": [
+            [
+                "fd4c5ab3314f7d22"
+            ]
+        ]
+    },
+    {
+        "id": "e73e267063030827",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "Update Light Controls",
+        "func": "var brightness = global.get(\"LightBrightnesses\")[global.get(\"LightEffect\")];\nif (brightness == undefined) {\n    brightness = 255;\n}\n\nvar color = global.get(\"LightColors\")[global.get(\"LightEffect\")];\nif (color == undefined) {\n    color = { h: 0, s: 0 };\n}\n\nreturn [ { \"payload\" : color }, { \"payload\" : brightness } ];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "334159e25dfe3937"
+            ],
+            [
+                "aa9f14bf75e25dea"
+            ]
+        ]
+    },
+    {
+        "id": "e6a4c9c2ab6f8430",
+        "type": "debug",
+        "z": "908ffa7fd113eb03",
+        "name": "Light Command",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 400,
+        "wires": []
     }
 ]

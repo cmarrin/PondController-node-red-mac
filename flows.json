@@ -312,16 +312,6 @@
         "className": ""
     },
     {
-        "id": "9a4242ee0a7c3d43",
-        "type": "serial out",
-        "z": "bf43c5ef815e2243",
-        "name": "",
-        "serial": "39f99e4a62f373c8",
-        "x": 840,
-        "y": 680,
-        "wires": []
-    },
-    {
         "id": "f216c318626bd817",
         "type": "inject",
         "z": "bf43c5ef815e2243",
@@ -343,7 +333,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[140,224,64,0,0]}",
         "payloadType": "json",
         "x": 190,
-        "y": 200,
+        "y": 300,
         "wires": [
             [
                 "dfa752999652ce15"
@@ -351,29 +341,10 @@
         ]
     },
     {
-        "id": "d4f9c1bdf968205c",
-        "type": "function",
-        "z": "bf43c5ef815e2243",
-        "name": "Make Light Event",
-        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar buf = Buffer.alloc(7 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt();\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nbuf.writeUInt8((msg.payload.size >> 8) & 0xff, index++);\nbuf.writeUInt8(msg.payload.size & 0xff, index++);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt();\nbuf[index++] = \")\".charCodeAt();\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\nnode.warn(\"Serial:cmd='\" + msg.payload.cmd + \"' (cksum=\" + buf[checksumIndex] + \")\");\n\nreturn { payload : buf };",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 530,
-        "y": 680,
-        "wires": [
-            [
-                "9a4242ee0a7c3d43"
-            ]
-        ]
-    },
-    {
         "id": "75966ffbb9e14ee5",
         "type": "inject",
         "z": "bf43c5ef815e2243",
-        "name": "Send Color Off Msg",
+        "name": "Turn Post Lights Off",
         "props": [
             {
                 "p": "payload"
@@ -387,14 +358,14 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "command",
-        "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[60,7,0,0,0]}",
-        "payloadType": "json",
+        "topic": "",
+        "payload": "LightOff",
+        "payloadType": "str",
         "x": 170,
         "y": 140,
         "wires": [
             [
-                "dfa752999652ce15"
+                "c98c45f1f21e5be6"
             ]
         ]
     },
@@ -407,13 +378,10 @@
             "b0ae5194adc15f74",
             "2f70d95631d6b2cd"
         ],
-        "x": 295,
-        "y": 680,
+        "x": 825,
+        "y": 580,
         "wires": [
-            [
-                "d4f9c1bdf968205c",
-                "567de1a3c9d68ca9"
-            ]
+            []
         ]
     },
     {
@@ -425,8 +393,8 @@
         "links": [
             "aab07133f0d61167"
         ],
-        "x": 855,
-        "y": 320,
+        "x": 875,
+        "y": 440,
         "wires": []
     },
     {
@@ -557,7 +525,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"f\",\"size\":4,\"data\":[25,200,100,2]}",
         "payloadType": "json",
         "x": 180,
-        "y": 320,
+        "y": 420,
         "wires": [
             [
                 "dfa752999652ce15"
@@ -586,7 +554,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"p\",\"size\":5,\"data\":[50,224,200,4,7]}",
         "payloadType": "json",
         "x": 180,
-        "y": 380,
+        "y": 480,
         "wires": [
             [
                 "dfa752999652ce15"
@@ -615,7 +583,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"r\",\"size\":5,\"data\":[50,255,120,15,7]}",
         "payloadType": "json",
         "x": 190,
-        "y": 500,
+        "y": 600,
         "wires": [
             [
                 "dfa752999652ce15"
@@ -644,78 +612,10 @@
         "payload": "{\"adr\":0,\"cmd\":\"m\",\"size\":13,\"data\":[0,255,200,96,255,200,170,255,200,38,255,200,3]}",
         "payloadType": "json",
         "x": 190,
-        "y": 440,
+        "y": 540,
         "wires": [
             [
                 "dfa752999652ce15"
-            ]
-        ]
-    },
-    {
-        "id": "eb68088678fc1656",
-        "type": "inject",
-        "z": "bf43c5ef815e2243",
-        "name": "POST Executable",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "executable",
-        "payload": "00",
-        "payloadType": "str",
-        "x": 160,
-        "y": 560,
-        "wires": [
-            [
-                "567de1a3c9d68ca9"
-            ]
-        ]
-    },
-    {
-        "id": "85930b171fa6428d",
-        "type": "exec",
-        "z": "bf43c5ef815e2243",
-        "command": "curl ",
-        "addpay": "payload",
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "winHide": false,
-        "oldrc": false,
-        "name": "",
-        "x": 850,
-        "y": 560,
-        "wires": [
-            [],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "567de1a3c9d68ca9",
-        "type": "function",
-        "z": "bf43c5ef815e2243",
-        "name": "Build Command Msg",
-        "func": "function toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar uri = \"192.168.4.254\";\nvar contents = \"\";\n\nif (msg.topic == \"executable\") {\n    var file = \"/Users/cmarrin/PostLightEffects.clvx\";\n    var root = \"fs\";\n\n    contents = \" -F file=@\" + file + \" http://\" + uri + \"/\" + root;\n} else {\n    contents = \" http://\" + uri + \"/command?cmd=\";\n\n    // Add command\n    // Make enough room for 3 digit param plus comma\n    contents += msg.payload.cmd;\n\n    for (var i = 0; i < msg.payload.size; ++i) {\n        contents += \",\" + msg.payload.data[i];\n    }\n}\n\nnode.warn(\"HTTP:cmd='\" + contents + \"'\");\n\nreturn { payload : contents };\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 560,
-        "wires": [
-            [
-                "85930b171fa6428d"
             ]
         ]
     },
@@ -741,7 +641,7 @@
         "payload": "{\"adr\":0,\"cmd\":\"C\",\"size\":5,\"data\":[80,224,64,5,4]}",
         "payloadType": "json",
         "x": 180,
-        "y": 260,
+        "y": 360,
         "wires": [
             [
                 "dfa752999652ce15"
@@ -768,10 +668,52 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 320,
+        "y": 440,
         "wires": [
             [
                 "2f70d95631d6b2cd"
+            ]
+        ]
+    },
+    {
+        "id": "c98c45f1f21e5be6",
+        "type": "link out",
+        "z": "bf43c5ef815e2243",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "774a77791d961644"
+        ],
+        "x": 415,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f8454519764da12c",
+        "type": "inject",
+        "z": "bf43c5ef815e2243",
+        "name": "Turn Post Lights On",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "LightOn",
+        "payloadType": "str",
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "c98c45f1f21e5be6"
             ]
         ]
     },
@@ -1070,7 +1012,8 @@
         "wires": [
             [
                 "2f90e59b627dcfc3",
-                "e6a4c9c2ab6f8430"
+                "e6a4c9c2ab6f8430",
+                "4ef5c6e20915852c"
             ]
         ]
     },
@@ -1252,7 +1195,9 @@
         "type": "link in",
         "z": "908ffa7fd113eb03",
         "name": "Light On Off",
-        "links": [],
+        "links": [
+            "c98c45f1f21e5be6"
+        ],
         "x": 85,
         "y": 380,
         "wires": [
@@ -1453,8 +1398,48 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 830,
-        "y": 400,
+        "x": 910,
+        "y": 440,
         "wires": []
+    },
+    {
+        "id": "bcd4c29fba45fdb6",
+        "type": "exec",
+        "z": "908ffa7fd113eb03",
+        "command": "curl ",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 990,
+        "y": 560,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "4ef5c6e20915852c",
+        "type": "function",
+        "z": "908ffa7fd113eb03",
+        "name": "Build Command Msg",
+        "func": "function toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar uri = \"localhost\";\nvar contents = \"\";\n\nif (msg.topic == \"executable\") {\n    var file = \"/Users/cmarrin/PostLightEffects.clvx\";\n    var root = \"fs\";\n\n    contents = \" -F file=@\" + file + \" http://\" + uri + \"/\" + root;\n} else {\n    contents = \" http://\" + uri + \"/command?cmd=\";\n\n    // Add command\n    // Make enough room for 3 digit param plus comma\n    contents += msg.payload.cmd;\n\n    for (var i = 0; i < msg.payload.size; ++i) {\n        contents += \",\" + msg.payload.data[i];\n    }\n}\n\nnode.warn(\"HTTP:cmd='\" + contents + \"'\");\n\nreturn { payload : contents };\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 560,
+        "wires": [
+            [
+                "bcd4c29fba45fdb6"
+            ]
+        ]
     }
 ]

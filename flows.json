@@ -152,25 +152,6 @@
         "className": ""
     },
     {
-        "id": "39f99e4a62f373c8",
-        "type": "serial-port",
-        "serialport": "/dev/tty.usbserial-AD02CUJ5",
-        "serialbaud": "2400",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "waitfor": "",
-        "dtr": "none",
-        "rts": "none",
-        "cts": "none",
-        "dsr": "none",
-        "newline": "\\n",
-        "bin": "false",
-        "out": "char",
-        "addchar": "",
-        "responsetimeout": "10000"
-    },
-    {
         "id": "aa26cc599ef500fc",
         "type": "ui_spacer",
         "z": "bf43c5ef815e2243",
@@ -1011,53 +992,8 @@
         "y": 440,
         "wires": [
             [
-                "2f90e59b627dcfc3",
                 "e6a4c9c2ab6f8430",
                 "4ef5c6e20915852c"
-            ]
-        ]
-    },
-    {
-        "id": "ca7e17a8515287a8",
-        "type": "serial out",
-        "z": "908ffa7fd113eb03",
-        "name": "",
-        "serial": "39f99e4a62f373c8",
-        "x": 580,
-        "y": 620,
-        "wires": []
-    },
-    {
-        "id": "2f90e59b627dcfc3",
-        "type": "function",
-        "z": "908ffa7fd113eb03",
-        "name": "Make Light Event",
-        "func": "\nfunction checksum(buf) \n{\n    var sum = 0;\n\n    for (var i = 0; i < buf.length; i++) {\n        sum += buf.readUInt8(i);\n    }\n    return sum & 0x3f;\n}\n\nfunction toChar(i)\n{\n    return String.fromCharCode(0x30 + i);\n}\n\nfunction toCharCode(i)\n{\n    return 0x30 + i;\n}\n\nvar buf = Buffer.alloc(6 + msg.payload.size);\nvar index = 0;\nbuf[index++] = \"(\".charCodeAt(0);\nbuf[index++] = toCharCode(msg.payload.adr);\nbuf[index++] = msg.payload.cmd.charCodeAt(0);\n\nbuf.writeUInt8(msg.payload.size, index++);\n\nfor (var i = 0; i < msg.payload.size; ++i) {\n    buf.writeUInt8(msg.payload.data[i], index++);\n}\n\nvar checksumIndex = index;\nbuf[index++] = \"0\".charCodeAt(0);\nbuf[index++] = \")\".charCodeAt(0);\n\nbuf[checksumIndex] = checksum(buf) + 0x30;\n\n//node.warn(buf);\n//node.warn(\"Send Light Event:cmd='\" + msg.payload.cmd + \n//        \"', data=[\" + msg.payload.data + \"]\");\n\nreturn { payload : buf };",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 290,
-        "y": 620,
-        "wires": [
-            [
-                "ca7e17a8515287a8"
-            ]
-        ]
-    },
-    {
-        "id": "31ed19ab66200615",
-        "type": "link in",
-        "z": "908ffa7fd113eb03",
-        "name": "Receive Light Effect",
-        "links": [],
-        "x": 85,
-        "y": 620,
-        "wires": [
-            [
-                "2f90e59b627dcfc3"
             ]
         ]
     },
@@ -1106,12 +1042,11 @@
         "topic": "topic",
         "topicType": "msg",
         "className": "",
-        "x": 190,
+        "x": 170,
         "y": 260,
         "wires": [
             [
-                "0cb1e440d5ad10fe",
-                "e73e267063030827"
+                "0cb1e440d5ad10fe"
             ]
         ]
     },
@@ -1126,7 +1061,8 @@
                 "p": "LightEffect",
                 "pt": "global",
                 "to": "payload",
-                "tot": "msg"
+                "tot": "msg",
+                "dc": true
             }
         ],
         "action": "",
@@ -1134,11 +1070,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 390,
+        "x": 330,
         "y": 260,
         "wires": [
             [
-                "fd4c5ab3314f7d22"
+                "fd4c5ab3314f7d22",
+                "e73e267063030827"
             ]
         ]
     },
@@ -1272,7 +1209,7 @@
         "max": "255",
         "step": 1,
         "className": "",
-        "x": 310,
+        "x": 350,
         "y": 180,
         "wires": [
             [
@@ -1285,14 +1222,14 @@
         "type": "function",
         "z": "908ffa7fd113eb03",
         "name": "Brightness Handler",
-        "func": "// Incoming message is a brightness value (0-255) which we \n// want to put in the global store per-effect.\nif (global.get(\"LightBrightnesses\") == null) {\n    global.set(\"LightBrightnesses\", {});\n}\n\nglobal.get(\"LightBrightnesses\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
+        "func": "// Incoming message is a brightness value (0-255) which we \n// want to put in the global store per-effect.\nglobal.get(\"LightBrightnesses\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
-        "initialize": "",
+        "initialize": "if (global.get(\"LightBrightnesses\") == null) {\n    global.set(\"LightBrightnesses\", {});\n}\n\n",
         "finalize": "",
         "libs": [],
-        "x": 510,
+        "x": 530,
         "y": 180,
         "wires": [
             [
@@ -1347,14 +1284,14 @@
         "type": "function",
         "z": "908ffa7fd113eb03",
         "name": "Color Handler",
-        "func": "// Incoming message is a color object which we want to put\n// in the global store per-effect.\nif (global.get(\"LightColors\") == null) {\n    global.set(\"LightColors\", { });\n}\n\nglobal.get(\"LightColors\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
+        "func": "// Incoming message is a color object which we want to put\n// in the global store per-effect.\nglobal.get(\"LightColors\")[global.get(\"LightEffect\")] = msg.payload;\n\nif (global.get(\"LightsOn\") == \"LightOn\") {\n    return { \"payload\": \"LightOn\" };\n}\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
-        "initialize": "",
+        "initialize": "if (global.get(\"LightColors\") == null) {\n    global.set(\"LightColors\", { });\n}",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 620,
         "y": 100,
         "wires": [
             [
@@ -1371,7 +1308,7 @@
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
-        "initialize": "",
+        "initialize": "if (global.get(\"LightEffect\") == null) {\n    global.set(\"LightEffect\", \"LightColor\");\n}",
         "finalize": "",
         "libs": [],
         "x": 160,
